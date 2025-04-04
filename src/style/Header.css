@@ -1,0 +1,52 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2d3748;
+  color: white;
+  padding: 1rem 2rem;
+}
+
+.header-nav-wrapper{
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.header-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.header-nav-item {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:active {
+    text-decoration: underline;
+    font-weight: bold;
+  }
+}
+
+.header-profile-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    color: #4a5568;
+  }
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
