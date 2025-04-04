@@ -1,0 +1,26 @@
+[
+  {
+      "id": 1,
+      "name": "John Doe",
+      "isAuthenticated": true,
+      "avatar": "https://randomuser.me/api/portraits/men/1.jpg",
+      "email": "johndoe@example.com",
+      "password": "123"
+  },
+  {
+      "id": 2,
+      "name": "Jane Smith",
+      "isAuthenticated": false,
+      "avatar": "https://randomuser.me/api/portraits/women/2.jpg",
+      "email": "janesmith@example.com",
+      "password": "456"
+  },
+  {
+      "id": 3,
+      "name": "Tom Brown",
+      "isAuthenticated": true,
+      "avatar": "https://randomuser.me/api/portraits/men/3.jpg",
+      "email": "tombrown@example.com",
+      "password": "789"
+  }
+]
