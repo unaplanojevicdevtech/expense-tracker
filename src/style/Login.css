@@ -1,0 +1,44 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #a8c8db;
+}
+
+.login-box {
+  background-color: white;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  text-align: center;
+}
+
+.login-form {
+  padding-bottom: 2rem;
+}
+
+.login-form .MuiInputBase-root {
+  padding: .5rem;
+}
+
+.login-form .MuiButtonBase-root {
+  padding: 2rem;
+}
+
+.login-form .MuiButton-root:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.login-box h1 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.login-box p {
+  margin-top: 1.5rem;
+  color: #666;
+}
