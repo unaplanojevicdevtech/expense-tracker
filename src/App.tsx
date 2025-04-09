@@ -1,18 +1,35 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header'
 import Dashboards from './components/views/Dashboards';
 import Transactions from './components/views/Transactions';
+import Login from './components/views/Login';
+import PrivateRoute from './routes/PrivateRoute';
 
 // BrowserRouter - top-level wrapper that enables routing
 // Routes - container that holds all your individual route definitions
 // Route - defines a URL path and which component to render at that path
-function App() {
+function App() {  
   return (
     <BrowserRouter>
-      <Header />
       <Routes>
-        <Route path="/" element={<Dashboards />} />
-        <Route path="/transactions" element={<Transactions />} />
+        <Route path="/" element={<Login />} />
+
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Dashboards />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/transactions"
+          element={
+            <PrivateRoute>
+              <Transactions />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )

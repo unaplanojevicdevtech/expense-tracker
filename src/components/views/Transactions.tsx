@@ -1,9 +1,15 @@
+import Header from "../Header";
+
 function Transactions() {
   return (
-    <div>
-      <h1>Transactions</h1>
-      <p>List of transactions will be displayed here.</p>
-    </div>
+    <> 
+      <Header />
+      <div>
+        <h1>Transactions</h1>
+        <p>List of transactions will be displayed here.</p>
+      </div>
+    </>
+
   );
 }
 export default Transactions;
