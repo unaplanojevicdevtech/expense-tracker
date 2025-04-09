@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header'
-// import Dashboards from './components/views/Dashboards';
-// import Transactions from './components/views/Transactions';
+import Dashboards from './components/views/Dashboards';
 import Login from './components/views/Login';
 import { useUser } from './context/UserContext';
 
@@ -13,12 +11,9 @@ function App() {
   
   return (
     <BrowserRouter>
-      {user?.isAuthenticated && <Header />}
-      {/* <Header /> */}
+      {user?.isAuthenticated && <Dashboards />}
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path="/home" element={<Dashboards />} />
-        <Route path="/transactions" element={<Transactions />} /> */}
       </Routes>
     </BrowserRouter>
   )

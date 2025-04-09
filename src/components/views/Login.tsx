@@ -1,7 +1,10 @@
 import { TextField, Button } from "@mui/material";
 import '../../style/Login.css';
+
 import { useState } from "react";
 import { useUser } from '../../context/UserContext';
+import { useNavigate } from "react-router-dom";
+
 import users from '../../data/users.json';
 import { IUser } from '../../models/User';
 
@@ -13,6 +16,7 @@ function Login() {
   const [passwordError, setPasswordError] = useState(false);
 
   const { setUser } = useUser();
+  const navigate = useNavigate();
 
   const login = (() => {
     setUsernameError(false);
@@ -23,7 +27,8 @@ function Login() {
     );
 
     if (foundUser) {
-      setUser({ ...foundUser, isAuthenticated: true });
+      setUser({ ...foundUser, isAuthenticated: true }); navigate('/dashboards');
+      navigate('/home');
     } 
     else {
       if (!users.some((u: IUser) => u.username === username)) {
