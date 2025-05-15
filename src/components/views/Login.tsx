@@ -27,7 +27,7 @@ function Login() {
     );
 
     if (foundUser) {
-      setUser({ ...foundUser, isAuthenticated: true }); navigate('/dashboards');
+      setUser({ ...foundUser, isAuthenticated: true });
       navigate('/home');
     } 
     else {

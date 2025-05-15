@@ -1,8 +1,19 @@
 import '../style/Header.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
 function Header() {
+  const { user, setUser } = useUser();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    if (user) {
+      setUser({ ...user, isAuthenticated: false });
+      navigate('/');
+    }
+  };
+
   return (
     <header className="header">
       <div className="header-nav-wrapper">
@@ -12,8 +23,8 @@ function Header() {
         </div>
       </div>
       <div>
-        <button className="header-profile-btn">
-          <AccountCircleIcon fontSize="large" />
+        <button className="header-profile-btn" onClick={logout}>
+          <AccountCircleIcon fontSize="large"/>
         </button>
       </div>
     </header>
