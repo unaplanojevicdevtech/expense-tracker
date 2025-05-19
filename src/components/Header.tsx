@@ -21,7 +21,7 @@ function Header() {
 
   // logout
   const [ isDialogOpen, setIsDialogOpen ] = useState(false);
-    const { user, setUser } = useUser();
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
 
   const openLogoutDialog = () => {

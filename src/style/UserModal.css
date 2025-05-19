@@ -1,0 +1,90 @@
+.user-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  outline: none;
+  min-width: 300px;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 500px;
+}
+
+.user-modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-modal-divider {
+  border: 0;
+  height: 1px;
+  background-color: #ccc;
+  margin: 0.5rem 0;
+}
+
+.user-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.user-modal-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-modal-row
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.user-modal-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+    background-color: #fff;
+  }
+
+  &:disabled {
+    background-color: #f0f0f0;
+    color: #777;
+    cursor: not-allowed;
+  }
+}
+
+.user-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.user-modal-close-btn {
+  color: #555;
+  text-transform: none;
+  font-weight: 500;
+}
+
+.user-modal-edit-btn {
+  color: #1976d2;
+  text-transform: none;
+  font-weight: 500;
+}
