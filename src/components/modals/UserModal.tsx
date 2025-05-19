@@ -17,6 +17,8 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
   const [username, setUsername] = useState(user?.username || '');
   const [password, setPassword] = useState(user?.password || '');
 
+  const isFormInvalid = !name.trim() || !email.trim() || !username.trim() || !password.trim();
+
   const handleChange = () => {
     if (isDisabled) {
       // Enable editing
@@ -34,6 +36,11 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
       setIsDisabled(true);
       onClose();
     }
+  };
+
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   return (
@@ -54,6 +61,9 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
               disabled={isDisabled}
               onChange={(e) => setName(e.target.value)}
             />
+            {!name.trim() && !isDisabled && (
+              <span className="user-modal-error">Name is required.</span>
+            )}
           </div>
           <div className="user-modal-row">
             <label htmlFor="email">Email</label>
@@ -66,6 +76,13 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
               placeholder="Enter your email"
               onChange={(e) => setEmail(e.target.value)}
             />
+            {!email.trim() && !isDisabled && (
+              <span className="user-modal-error">Email is required.</span>
+            )}
+
+            {email.trim() && !isValidEmail(email) && !isDisabled && (
+              <span className="user-modal-error">Invalid email format.</span>
+            )}
           </div>
           <div className="user-modal-row">
             <label htmlFor="username">Username</label>
@@ -78,6 +95,9 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+            {!username.trim() && !isDisabled && (
+              <span className="user-modal-error">Username is required.</span>
+            )}
           </div>
           <div className="user-modal-row">
             <label htmlFor="password">Password</label>
@@ -90,13 +110,16 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {!password.trim() && !isDisabled && (
+              <span className="user-modal-error">Password is required.</span>
+            )}
           </div>
         </div>
         <hr className="user-modal-divider" />
 
         <div className="user-modal-actions">
           <Button onClick={onClose} className="user-modal-close-btn">Cancel</Button>
-          <Button onClick={handleChange} className="user-modal-edit-btn">
+          <Button onClick={handleChange} className="user-modal-edit-btn" disabled={isFormInvalid}>
             {isDisabled ? 'Edit' : 'Save'}
           </Button>
         </div>
