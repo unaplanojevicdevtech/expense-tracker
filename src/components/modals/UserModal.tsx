@@ -38,6 +38,15 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     }
   };
 
+  const handleClose = () => {
+    setName(user?.name || '');
+    setEmail(user?.email || '');
+    setUsername(user?.username || '');
+    setPassword(user?.password || '');
+    setIsDisabled(true);
+    onClose();
+  }
+
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -118,7 +127,7 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
         <hr className="user-modal-divider" />
 
         <div className="user-modal-actions">
-          <Button onClick={onClose} className="user-modal-close-btn">Cancel</Button>
+          <Button onClick={handleClose} className="user-modal-close-btn">Cancel</Button>
           <Button onClick={handleChange} className="user-modal-edit-btn" disabled={isFormInvalid}>
             {isDisabled ? 'Edit' : 'Save'}
           </Button>

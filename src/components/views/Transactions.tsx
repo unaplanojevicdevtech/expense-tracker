@@ -7,7 +7,7 @@ import { useUser } from "../../context/UserContext";
 function Transactions() {
   const { user } = useUser();
 
-const tableHeaders: { label: string; key: keyof ITransactionTableRow }[] = [
+  const tableHeaders: { label: string; key: keyof ITransactionTableRow }[] = [
     { label: 'Date', key: 'date' },
     { label: 'Description', key: 'description' },
     { label: 'Category', key: 'category' },
