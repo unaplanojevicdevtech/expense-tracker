@@ -1,4 +1,5 @@
 import { Modal, Button } from '@mui/material';
+import '../../style/Modal.css';
 import '../../style/UserModal.css';
 import { useUser } from '../../context/UserContext';
 import { useState } from 'react';
@@ -54,9 +55,9 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <div className="user-modal">
-        <h2 className="user-modal-title">User Settings</h2>
-        <hr className="user-modal-divider" />
+      <div className="modal">
+        <h2 className="modal-title">User Settings</h2>
+        <hr className="modal-divider" />
 
         <div className="user-modal-content">
           <div className="user-modal-row">
@@ -124,9 +125,9 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
             )}
           </div>
         </div>
-        <hr className="user-modal-divider" />
+        <hr className="modal-divider" />
 
-        <div className="user-modal-actions">
+        <div className="modal-actions">
           <Button onClick={handleClose} className="user-modal-close-btn">Cancel</Button>
           <Button onClick={handleChange} className="user-modal-edit-btn" disabled={isFormInvalid}>
             {isDisabled ? 'Edit' : 'Save'}
