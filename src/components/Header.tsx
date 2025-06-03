@@ -1,6 +1,15 @@
 import '../style/Header.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Menu,
+  MenuItem
+} from '@mui/material';
 import UserModal from './modals/UserModal';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';

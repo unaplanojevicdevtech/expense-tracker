@@ -1,4 +1,5 @@
 import { Modal, Button } from '@mui/material';
+import '../../style/Modal.css';
 import '../../style/UserModal.css';
 import { useUser } from '../../context/UserContext';
 import { useState } from 'react';
@@ -38,6 +39,15 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     }
   };
 
+  const handleClose = () => {
+    setName(user?.name || '');
+    setEmail(user?.email || '');
+    setUsername(user?.username || '');
+    setPassword(user?.password || '');
+    setIsDisabled(true);
+    onClose();
+  }
+
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -45,9 +55,9 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <div className="user-modal">
-        <h2 className="user-modal-title">User Settings</h2>
-        <hr className="user-modal-divider" />
+      <div className="modal">
+        <h2 className="modal-title">User Settings</h2>
+        <hr className="modal-divider" />
 
         <div className="user-modal-content">
           <div className="user-modal-row">
@@ -115,10 +125,10 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
             )}
           </div>
         </div>
-        <hr className="user-modal-divider" />
+        <hr className="modal-divider" />
 
-        <div className="user-modal-actions">
-          <Button onClick={onClose} className="user-modal-close-btn">Cancel</Button>
+        <div className="modal-actions">
+          <Button onClick={handleClose} className="user-modal-close-btn">Cancel</Button>
           <Button onClick={handleChange} className="user-modal-edit-btn" disabled={isFormInvalid}>
             {isDisabled ? 'Edit' : 'Save'}
           </Button>
