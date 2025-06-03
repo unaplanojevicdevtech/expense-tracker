@@ -16,9 +16,10 @@ type TableHeader<T> = {
 type TableProps<T> = {
   headers: TableHeader<T>[];
   rows: T[];
+  renderActions?: (row: T, rowIndex: number) => React.ReactNode;
 };
 
-function BasicTable<T>({ headers, rows }: TableProps<T>) {
+function BasicTable<T>({ headers, rows, renderActions }: TableProps<T>) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }}>
@@ -29,6 +30,7 @@ function BasicTable<T>({ headers, rows }: TableProps<T>) {
                 {header.label}
               </TableCell>
             ))}
+              <TableCell align='center' sx={{ fontWeight: 'bold' }} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -39,6 +41,9 @@ function BasicTable<T>({ headers, rows }: TableProps<T>) {
                   {String(row[header.key])}
                 </TableCell>
               ))}
+                <TableCell align='right'>
+                  {renderActions ? renderActions(row, rowIndex) : null}
+                </TableCell>
             </TableRow>
           ))}
         </TableBody>
