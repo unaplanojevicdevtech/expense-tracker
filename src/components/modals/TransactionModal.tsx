@@ -48,7 +48,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
       currency,
       category,
       date: (date ?? new Date()).toISOString().split('T')[0],
-      note: note ? note : '-',
+      note,
     };
 
     onCreate(newTransaction); 

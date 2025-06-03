@@ -6,7 +6,8 @@ import { useState } from "react";
 import { ITransactionTableRow, Transaction } from "../../models/Transaction";
 import { useUser } from "../../context/UserContext";
 import '../../style/Transactions.css';
-import { Button } from "@mui/material";
+import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { format } from 'date-fns';
 
 function Transactions() {
@@ -18,7 +19,7 @@ function Transactions() {
     { label: 'Date', key: 'date' },
     { label: 'Note', key: 'note' },
     { label: 'Category', key: 'category' },
-    { label: 'Amount', key: 'amount' },
+    { label: 'Amount', key: 'amount' }
   ];
 
   const tableRows: ITransactionTableRow[] = user
@@ -26,11 +27,15 @@ function Transactions() {
         .filter(transaction => transaction.userId === user.id)
         .map(transaction => ({
           date: format(new Date(transaction.date), 'dd/MM/yyyy'),
-          note: transaction.note,
+          note: transaction.note ? transaction.note : '-',
           category: transaction.category,
           amount: `${transaction.amount} ${transaction.currency}`,
         }))
     : [];
+
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuRowIndex, setMenuRowIndex] = useState<number | null>(null);
+  const isMenuOpen = Boolean(menuAnchorEl);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -42,6 +47,16 @@ function Transactions() {
 
   const handleCreateTransaction = (newTransaction: Transaction) => {
     setTransactionList(prev => [...prev, newTransaction]);
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, rowIndex: number) => {
+    setMenuAnchorEl(event.currentTarget);
+    setMenuRowIndex(rowIndex);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setMenuRowIndex(null);
   };
 
   return (
@@ -62,7 +77,32 @@ function Transactions() {
               Create new transaction
             </Button>
           </div>
-          <BasicTable<ITransactionTableRow> headers={tableHeaders} rows={tableRows} />
+          <BasicTable<ITransactionTableRow>
+            headers={tableHeaders}
+            rows={tableRows}
+            renderActions={(_, rowIndex) => (
+              <>
+                <IconButton onClick={(e) => handleMenuOpen(e, rowIndex)}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={menuAnchorEl}
+                  open={isMenuOpen && menuRowIndex === rowIndex}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem onClick={() => { console.log(`Edit row ${rowIndex}`); handleMenuClose(); }}>
+                    Edit
+                  </MenuItem>
+                  <MenuItem onClick={() => { console.log(`Delete row ${rowIndex}`); handleMenuClose(); }}>
+                    Delete
+                  </MenuItem>
+                  <MenuItem onClick={() => { console.log(`View details for row ${rowIndex}`); handleMenuClose(); }}>
+                    View Details
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
+          />
         </div>
 
         <TransactionModal
