@@ -89,7 +89,7 @@ function Header() {
           <DialogTitle>Logout</DialogTitle>
           <DialogContent>
             <DialogContentText>Are you sure you want to log out? Any unsaved changes will be lost.</DialogContentText>
-            </DialogContent>
+          </DialogContent>
           <DialogActions>
             <Button onClick={closeLogoutDialog}>Cancel</Button>
             <Button onClick={logout}>Logout</Button>
