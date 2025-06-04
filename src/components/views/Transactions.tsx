@@ -6,14 +6,16 @@ import { useState } from "react";
 import { ITransactionTableRow, Transaction } from "../../models/Transaction";
 import { useUser } from "../../context/UserContext";
 import '../../style/Transactions.css';
-import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Menu, MenuItem } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { format } from 'date-fns';
 
 function Transactions() {
   const { user } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [transactionList, setTransactionList] = useState(transactions);
+  const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
 
   const tableHeaders: { label: string; key: keyof ITransactionTableRow }[] = [
     { label: 'Date', key: 'date' },
@@ -37,6 +39,8 @@ function Transactions() {
   const [menuRowIndex, setMenuRowIndex] = useState<number | null>(null);
   const isMenuOpen = Boolean(menuAnchorEl);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -46,7 +50,7 @@ function Transactions() {
   };
 
   const handleCreateTransaction = (newTransaction: Transaction) => {
-    setTransactionList(prev => [...prev, newTransaction]);
+    setTransactionList(currentTransactions => [...currentTransactions, newTransaction]);
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, rowIndex: number) => {
@@ -57,6 +61,24 @@ function Transactions() {
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
     setMenuRowIndex(null);
+  };
+
+  const deleteTransaction = () => {
+    if (transactionToDelete) {
+      setTransactionList(currentTransactions =>
+        currentTransactions.filter(t => t.id !== transactionToDelete.id)
+      );
+      setIsDialogOpen(false);
+      setTransactionToDelete(null);
+    }
+  };
+
+  const handleDeleteDialog = (rowIndex: number) => {
+    const transactionsByUser = transactionList.filter(t => t.userId === user?.id);
+    const transaction = transactionsByUser[rowIndex];
+    setTransactionToDelete(transaction);
+    setIsDialogOpen(true);
+    handleMenuClose();
   };
 
   return (
@@ -93,13 +115,23 @@ function Transactions() {
                   <MenuItem onClick={() => { console.log(`Edit row ${rowIndex}`); handleMenuClose(); }}>
                     Edit
                   </MenuItem>
-                  <MenuItem onClick={() => { console.log(`Delete row ${rowIndex}`); handleMenuClose(); }}>
+                  <MenuItem onClick={() => handleDeleteDialog(rowIndex)} style={{ color: 'red' }}>
                     Delete
                   </MenuItem>
                   <MenuItem onClick={() => { console.log(`View details for row ${rowIndex}`); handleMenuClose(); }}>
                     View Details
                   </MenuItem>
                 </Menu>
+                <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+                  <DialogTitle>Delete transaction</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>Are you sure you want to delete this transaction? This action cannot be undone.</DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={deleteTransaction}>Delete</Button>   
+                  </DialogActions>
+                </Dialog>
               </>
             )}
           />

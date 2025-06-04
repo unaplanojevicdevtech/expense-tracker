@@ -37,7 +37,16 @@ function BasicTable<T>({ headers, rows, renderActions }: TableProps<T>) {
           {rows.map((row, rowIndex) => (
             <TableRow key={rowIndex}>
               {headers.map((header, colIndex) => (
-                <TableCell key={colIndex} align='center'>
+                <TableCell 
+                  key={colIndex} 
+                  align='center'
+                    sx={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: 150,
+                    }}
+                >
                   {String(row[header.key])}
                 </TableCell>
               ))}
