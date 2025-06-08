@@ -2,48 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  min-height: 440px;
+  min-height: 452px;
 }
 
 .user-modal-row {
   display: flex;
   flex-direction: column;
-}
-
-.user-modal-row
-  label {
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #333;
-}
-
-.user-modal-input {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  background-color: #f9f9f9;
-  color: #333;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-  &:focus {
-    border-color: #1976d2;
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
-    background-color: #fff;
-  }
-
-  &:disabled {
-    background-color: #f0f0f0;
-    color: #777;
-    cursor: not-allowed;
-  }
-}
-
-.user-modal-error {
-  color: red;
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
 }
 
 .user-modal-close-btn {
