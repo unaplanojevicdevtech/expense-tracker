@@ -1,4 +1,4 @@
-import { Modal, Button } from '@mui/material';
+import { Modal, Button, TextField } from '@mui/material';
 import '../../style/Modal.css';
 import '../../style/UserModal.css';
 import { useUser } from '../../context/UserContext';
@@ -17,8 +17,6 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
   const [email, setEmail] = useState(user?.email || '');
   const [username, setUsername] = useState(user?.username || '');
   const [password, setPassword] = useState(user?.password || '');
-
-  const isFormInvalid = !name.trim() || !email.trim() || !username.trim() || !password.trim();
 
   const handleChange = () => {
     if (isDisabled) {
@@ -46,12 +44,14 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
     setPassword(user?.password || '');
     setIsDisabled(true);
     onClose();
-  }
+  };
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
+  const isFormInvalid = !name.trim() || !email.trim() || !username.trim() || !password.trim() || !isValidEmail(email);
 
   return (
     <Modal open={isOpen} onClose={onClose}>
@@ -61,68 +61,63 @@ export default function UserModal({ isOpen, onClose }: UserModalProps) {
 
         <div className="user-modal-content">
           <div className="user-modal-row">
-            <label htmlFor="name">Name</label>
-            <input
-              id="name"
-              type="text"
-              className="user-modal-input"
-              placeholder="Enter your name"
-              value={name}
+            <TextField
+              fullWidth
+              sx={{ mb: 2 }}
+              label="Name"
               disabled={isDisabled}
+              error={!name.trim() && !isDisabled}
+              helperText={!name.trim() && !isDisabled ? "Name is required." : ""}
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            {!name.trim() && !isDisabled && (
-              <span className="user-modal-error">Name is required.</span>
-            )}
           </div>
           <div className="user-modal-row">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email" 
+            <TextField
+              fullWidth
+              sx={{ mb: 2 }}
+              label="Email"
               type="email"
               disabled={isDisabled}
-              className="user-modal-input"
+              error={
+                (!isDisabled && (!email.trim() || (!!email.trim() && !isValidEmail(email))))
+              }
+              helperText={
+                !email.trim() && !isDisabled
+                  ? "Email is required."
+                  : email.trim() && !isValidEmail(email) && !isDisabled
+                  ? "Invalid email format."
+                  : ""
+              }
               value={email}
-              placeholder="Enter your email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            {!email.trim() && !isDisabled && (
-              <span className="user-modal-error">Email is required.</span>
-            )}
-
-            {email.trim() && !isValidEmail(email) && !isDisabled && (
-              <span className="user-modal-error">Invalid email format.</span>
-            )}
           </div>
           <div className="user-modal-row">
-            <label htmlFor="username">Username</label>
-            <input
-              id="username" 
-              type="text" 
-              className="user-modal-input" 
-              placeholder="Enter your username"
+            <TextField 
+              fullWidth
+              sx={{ mb: 2 }}
+              label="Username"
+              type="text"
               disabled={isDisabled}
+              error={!username.trim() && !isDisabled}
+              helperText={!username.trim() && !isDisabled ? "Username is required." : ""}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
-            {!username.trim() && !isDisabled && (
-              <span className="user-modal-error">Username is required.</span>
-            )}
           </div>
           <div className="user-modal-row">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password" 
-              type="password" 
-              className="user-modal-input" 
-              placeholder="Enter your password"
+            <TextField 
+              fullWidth
+              sx={{ mb: 2 }}
+              label="Password"
+              type="password"
               disabled={isDisabled}
+              error={!password.trim() && !isDisabled}
+              helperText={!password.trim() && !isDisabled ? "Password is required." : ""}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {!password.trim() && !isDisabled && (
-              <span className="user-modal-error">Password is required.</span>
-            )}
           </div>
         </div>
         <hr className="modal-divider" />

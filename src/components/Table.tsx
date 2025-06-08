@@ -6,7 +6,10 @@ import {
   TableCell,
   TableBody,
   Paper,
+  Box,
+  Typography,
 } from '@mui/material';
+import '../style/Table.css';
 
 type TableHeader<T> = {
   label: string;
@@ -34,27 +37,51 @@ function BasicTable<T>({ headers, rows, renderActions }: TableProps<T>) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {headers.map((header, colIndex) => (
-                <TableCell 
-                  key={colIndex} 
-                  align='center'
+          {rows.length > 0 ? (
+            rows.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {headers.map((header, colIndex) => (
+                  <TableCell
+                    key={colIndex}
+                    align='center'
                     sx={{
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       maxWidth: 150,
                     }}
-                >
-                  {String(row[header.key])}
-                </TableCell>
-              ))}
+                  >
+                    {String(row[header.key])}
+                  </TableCell>
+                ))}
                 <TableCell align='right'>
                   {renderActions ? renderActions(row, rowIndex) : null}
                 </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={headers.length + 1}
+                sx={{
+                  height: '200px',
+                  padding: 0,
+                  borderBottom: 'none',
+                }}
+              >
+                <Box
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography>No data available</Typography>
+                </Box>
+              </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </TableContainer>
