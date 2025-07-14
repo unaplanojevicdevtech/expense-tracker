@@ -21,17 +21,17 @@ function Transactions() {
     { label: 'Date', key: 'date' },
     { label: 'Note', key: 'note' },
     { label: 'Category', key: 'category' },
-    { label: 'Amount', key: 'amount' }
+    { label: 'Amount', key: 'amount' },
+    { label: 'Currency', key: 'currency' },
   ];
 
   const tableRows: ITransactionTableRow[] = user
     ? transactionList
         .filter(transaction => transaction.userId === user.id)
         .map(transaction => ({
+          ...transaction,
           date: format(new Date(transaction.date), 'dd/MM/yyyy'),
           note: transaction.note ? transaction.note : '-',
-          category: transaction.category,
-          amount: `${transaction.amount} ${transaction.currency}`,
         }))
     : [];
 
