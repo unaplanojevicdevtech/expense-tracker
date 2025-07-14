@@ -12,5 +12,6 @@ export interface ITransactionTableRow {
   date: string;
   note: string;
   category: string;
-  amount: string;
+  amount: number;
+  currency: string;
 }
