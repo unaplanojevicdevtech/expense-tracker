@@ -22,6 +22,7 @@
 /* Placeholder for future filters */
 .transaction-filters {
   display: flex;
+  flex: 1 1 0;
   gap: 12px;
 }
 
