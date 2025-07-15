@@ -6,7 +6,20 @@ import { useState } from "react";
 import { ITransactionTableRow, Transaction } from "../../models/Transaction";
 import { useUser } from "../../context/UserContext";
 import '../../style/Transactions.css';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Menu, MenuItem } from "@mui/material";
+import { 
+  Button, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  FormControl, 
+  IconButton, 
+  InputLabel, 
+  Menu, 
+  MenuItem,
+  Select
+} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { format } from 'date-fns';
 
@@ -16,6 +29,12 @@ function Transactions() {
 
   const [transactionList, setTransactionList] = useState(transactions);
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+
+  const [currency, setCurrency] = useState('');
+
+  const uniqueCurrencies = Array.from(
+    new Set(transactionList.map(t => t.currency).filter(Boolean))
+  );
 
   const tableHeaders: { label: string; key: keyof ITransactionTableRow }[] = [
     { label: 'Date', key: 'date' },
@@ -28,6 +47,7 @@ function Transactions() {
   const tableRows: ITransactionTableRow[] = user
     ? transactionList
         .filter(transaction => transaction.userId === user.id)
+        .filter(transaction => !currency || transaction.currency === currency) // <-- add this line
         .map(transaction => ({
           ...transaction,
           date: format(new Date(transaction.date), 'dd/MM/yyyy'),
@@ -81,6 +101,11 @@ function Transactions() {
     handleMenuClose();
   };
 
+  const clearFilters = () => {
+    setCurrency('');
+    // Reset other filters if any
+  };
+
   return (
     <>
       <Header />
@@ -89,8 +114,32 @@ function Transactions() {
           <h1 className="transaction-page-title">Transactions</h1>
           <div className="transaction-header">
             <div className="transaction-filters">
+              <FormControl fullWidth
+              >
+                <InputLabel id="currency-select-label">Currency</InputLabel>
+                <Select
+                  value={currency}
+                  label="Currency"
+                  variant="outlined"
+                  sx={{ background: '#fff' }}
+                  onChange={(e) => setCurrency(e.target.value)}
+                >
+                  {uniqueCurrencies.map(currency => (
+                    <MenuItem key={currency} value={currency}>
+                      {currency.toUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               {/* Future filter inputs go here */}
             </div>
+            <Button
+              variant="outlined"
+              className="transaction-create-button"
+              onClick={clearFilters}
+            >
+              Clear
+            </Button>
             <Button
               variant="outlined"
               className="transaction-create-button"
