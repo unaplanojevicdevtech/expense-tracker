@@ -21,7 +21,18 @@ import {
   Select
 } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { format } from 'date-fns';
+
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers';
+import { enGB } from 'date-fns/locale';
+
+import {
+  filterByUser, 
+  filterByCurrency, 
+  filterByDate, 
+  mapTransaction 
+} from "../../helpers/filterTransactions";
 
 function Transactions() {
   const { user } = useUser();
@@ -31,6 +42,7 @@ function Transactions() {
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
 
   const [currency, setCurrency] = useState('');
+  const [date, setDate] = useState<Date | null>(null);
 
   const uniqueCurrencies = Array.from(
     new Set(transactionList.map(t => t.currency).filter(Boolean))
@@ -46,13 +58,10 @@ function Transactions() {
 
   const tableRows: ITransactionTableRow[] = user
     ? transactionList
-        .filter(transaction => transaction.userId === user.id)
-        .filter(transaction => !currency || transaction.currency === currency) // <-- add this line
-        .map(transaction => ({
-          ...transaction,
-          date: format(new Date(transaction.date), 'dd/MM/yyyy'),
-          note: transaction.note ? transaction.note : '-',
-        }))
+        .filter(tx => filterByUser(tx, user.id))
+        .filter(tx => filterByCurrency(tx, currency))
+        .filter(tx => filterByDate(tx, date))
+        .map(mapTransaction)
     : [];
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -103,7 +112,7 @@ function Transactions() {
 
   const clearFilters = () => {
     setCurrency('');
-    // Reset other filters if any
+    setDate(null);
   };
 
   return (
@@ -114,16 +123,28 @@ function Transactions() {
           <h1 className="transaction-page-title">Transactions</h1>
           <div className="transaction-header">
             <div className="transaction-filters">
+              <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enGB}>
+                <DatePicker 
+                  sx={{ width: '100%', background: '#fff' }}
+                  label="From date"
+                  disableFuture
+                  value={date}
+                  minDate={new Date('2010-01-01')}
+
+                  onChange={setDate}
+                />
+              </LocalizationProvider>
               <FormControl fullWidth
               >
                 <InputLabel id="currency-select-label">Currency</InputLabel>
                 <Select
-                  value={currency}
                   label="Currency"
                   variant="outlined"
                   sx={{ background: '#fff' }}
+                  value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
                 >
+                  <MenuItem key="all" value="">All</MenuItem>
                   {uniqueCurrencies.map(currency => (
                     <MenuItem key={currency} value={currency}>
                       {currency.toUpperCase()}
@@ -131,7 +152,6 @@ function Transactions() {
                   ))}
                 </Select>
               </FormControl>
-              {/* Future filter inputs go here */}
             </div>
             <Button
               variant="outlined"
