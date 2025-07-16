@@ -45,7 +45,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
       id: crypto.randomUUID(),
       userId: user?.id ?? 0,
       amount: Number(amount),
-      currency,
+      currency: currency.toUpperCase(),
       category,
       date: (date ?? new Date()).toISOString().split('T')[0],
       note,

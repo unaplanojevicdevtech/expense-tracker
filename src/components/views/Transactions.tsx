@@ -18,6 +18,7 @@ import {
   InputLabel, 
   Menu, 
   MenuItem,
+  TablePagination,
   Select
 } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -115,6 +116,29 @@ function Transactions() {
     setDate(null);
   };
 
+  // pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const changePage = (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const paginatedRows = tableRows.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   return (
     <>
       <Header />
@@ -125,7 +149,7 @@ function Transactions() {
             <div className="transaction-filters">
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enGB}>
                 <DatePicker 
-                  sx={{ width: '100%', background: '#fff' }}
+                  sx={{ width: '100%', background: '#fff'}}
                   label="From date"
                   disableFuture
                   value={date}
@@ -144,7 +168,7 @@ function Transactions() {
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
                 >
-                  <MenuItem key="all" value="">All</MenuItem>
+                  <MenuItem key="all" value=""  disabled={currency === ''}>All</MenuItem>
                   {uniqueCurrencies.map(currency => (
                     <MenuItem key={currency} value={currency}>
                       {currency.toUpperCase()}
@@ -152,14 +176,21 @@ function Transactions() {
                   ))}
                 </Select>
               </FormControl>
+              <Button
+                variant="outlined"
+                className="transaction-create-button"
+                disabled={!currency && !date}
+                onClick={clearFilters}
+                sx={{
+                  '&.Mui-disabled': {
+                    color: '#aaa',
+                    backgroundColor: '#f5f5f5',
+                  }
+                }}
+              >
+                Clear
+              </Button>
             </div>
-            <Button
-              variant="outlined"
-              className="transaction-create-button"
-              onClick={clearFilters}
-            >
-              Clear
-            </Button>
             <Button
               variant="outlined"
               className="transaction-create-button"
@@ -170,7 +201,7 @@ function Transactions() {
           </div>
           <BasicTable<ITransactionTableRow>
             headers={tableHeaders}
-            rows={tableRows}
+            rows={paginatedRows}
             renderActions={(_, rowIndex) => (
               <>
                 <IconButton onClick={(e) => handleMenuOpen(e, rowIndex)}>
@@ -203,6 +234,16 @@ function Transactions() {
                 </Dialog>
               </>
             )}
+          />
+          <TablePagination
+            component="div"
+            className="transaction-pagination"
+            count={tableRows.length}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[5, 10, 15]}
+            onPageChange={changePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </div>
 
