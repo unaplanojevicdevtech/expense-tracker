@@ -18,15 +18,25 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { enGB } from 'date-fns/locale';
 import { useUser } from '../../context/UserContext';
-import { Transaction } from '../../models/Transaction';
+import { ITransactionTableRow, Transaction } from '../../models/Transaction';
+import { format, parse } from 'date-fns';
 
 type TransactionModalProps = {
   isOpen: boolean;
+  mode?: 'create' | 'edit' | 'preview';
+  transaction?: ITransactionTableRow | null;
   onClose: () => void;
   onCreate: (transaction: Transaction) => void;
 };
 
-export default function TransactionModal({ isOpen, onClose, onCreate }: TransactionModalProps) {
+export default function TransactionModal({ 
+  isOpen,
+  mode = 'create',
+  transaction, 
+  onClose,
+  onCreate 
+}: TransactionModalProps) {
+
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
   const [amountTouched, setAmountTouched] = useState(false);
@@ -40,6 +50,18 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
 
   const [isCreateBtnDisabled, setIsCreateBtnDisabled] = useState(true);
 
+  const modalTitle = {
+    create: 'Create new transaction',
+    preview: 'Preview transaction',
+    edit: 'Edit transaction',
+  };
+
+  const buttonTitle = () => {
+    if (mode === 'create') return 'Create';
+    if (mode === 'edit') return 'Save';
+    return '';
+  };
+
   const createNewTransaction = () => {
     const newTransaction = {
       id: crypto.randomUUID(),
@@ -47,7 +69,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
       amount: Number(amount),
       currency: currency.toUpperCase(),
       category,
-      date: (date ?? new Date()).toISOString().split('T')[0],
+      date: date ? format(date, 'dd/MM/yyyy') : format(new Date(), 'dd/MM/yyyy'),
       note,
     };
 
@@ -100,10 +122,26 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
     setIsCreateBtnDisabled(!isFormValid);
   }, [currency, category, amount, amountTouched]);
 
+  useEffect(() => {
+    if ((mode === 'preview' || mode === 'edit') && transaction) {
+      setDate(parse(transaction.date, 'dd/MM/yyyy', new Date()));
+      setAmount(transaction.amount.toString());
+      setCurrency(transaction.currency);
+      setCategory(transaction.category);
+      setNote(transaction.note);
+    } else {
+      setDate(new Date());
+      setAmount('');
+      setCurrency('');
+      setCategory('');
+      setNote('');
+    }
+  }, [mode, transaction, isOpen]);
+
   return (  
     <Modal open={isOpen} onClose={onClose}>
       <div className='modal'>
-        <h2 className='modal-title'>Create new transaction</h2>
+        <h2 className='modal-title'>{modalTitle[mode]}</h2>
         <hr className="modal-divider" />
 
         <div>
@@ -111,6 +149,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
             <DatePicker
               sx={{ mb: 2, width: '100%' }}
               label="Date"
+              disabled={mode === 'preview'}
               disableFuture
               minDate={new Date('2010-01-01')}
               value={date}
@@ -130,6 +169,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
               label="Amount"
               type="number"
               value={amount}
+              disabled={mode === 'preview'}
               error={amountTouched && !!amountError}
               helperText={amountTouched ? amountError : ''}
               onChange={(e) => setAmount(e.target.value)}
@@ -139,8 +179,9 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
             <FormControl fullWidth>
               <InputLabel>Currency</InputLabel>
               <Select
-                value={currency}
+                value={currency.toLowerCase()}
                 label="Currency"
+                disabled={mode === 'preview'}
                 onChange={(e) => setCurrency(e.target.value)}
               >
                 <MenuItem value={'eur'}>EUR</MenuItem>
@@ -155,6 +196,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
             <Select
               value={category}
               label="Category"
+              disabled={mode === 'preview'}
               onChange={(e) => setCategory(e.target.value)}
             >
               {categories.map((category) => (
@@ -170,6 +212,7 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
             maxRows={4}
             label="Note"
             value={note}
+            disabled={mode === 'preview'}
             onChange={(e) => setNote(e.target.value)}
           />
         </div>
@@ -178,7 +221,9 @@ export default function TransactionModal({ isOpen, onClose, onCreate }: Transact
 
         <div className='modal-actions'>
           <Button onClick={cancelCreation}>Cancel</Button>
-          <Button disabled={isCreateBtnDisabled} onClick={createNewTransaction}>Create</Button>
+          { mode !== 'preview' && (
+            <Button disabled={isCreateBtnDisabled} onClick={createNewTransaction}>{buttonTitle()}</Button>
+          )}
         </div>
       </div>
     </Modal>
