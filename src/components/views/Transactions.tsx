@@ -51,7 +51,6 @@ function Transactions() {
 
   const tableHeaders: { label: string; key: keyof ITransactionTableRow }[] = [
     { label: 'Date', key: 'date' },
-    { label: 'Note', key: 'note' },
     { label: 'Category', key: 'category' },
     { label: 'Amount', key: 'amount' },
     { label: 'Currency', key: 'currency' },
@@ -69,9 +68,15 @@ function Transactions() {
   const [menuRowIndex, setMenuRowIndex] = useState<number | null>(null);
   const isMenuOpen = Boolean(menuAnchorEl);
 
+  // maybe rename it to isModalOpen
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const [modalMode, setModalMode] = useState<'create' | 'edit' | 'preview'>('create');
+  const [selectedTransaction, setSelectedTransaction] = useState<ITransactionTableRow | null>(null);
+
   const openModal = () => {
+    setModalMode('create');
+    setSelectedTransaction(null);
     setIsModalOpen(true);
   };
 
@@ -86,6 +91,22 @@ function Transactions() {
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, rowIndex: number) => {
     setMenuAnchorEl(event.currentTarget);
     setMenuRowIndex(rowIndex);
+  };
+
+  const setModalData = (row: ITransactionTableRow) => {
+    setSelectedTransaction(row);
+    setIsModalOpen(true);
+    handleMenuClose();
+  };
+
+  const handlePreviewModal = (row: ITransactionTableRow) => {
+    setModalMode('preview');
+    setModalData(row);
+  };
+
+  const handleEditModal = (row: ITransactionTableRow) => {
+    setModalMode('edit');
+    setModalData(row);
   };
 
   const handleMenuClose = () => {
@@ -202,7 +223,7 @@ function Transactions() {
           <BasicTable<ITransactionTableRow>
             headers={tableHeaders}
             rows={paginatedRows}
-            renderActions={(_, rowIndex) => (
+            renderActions={(row, rowIndex) => (
               <>
                 <IconButton onClick={(e) => handleMenuOpen(e, rowIndex)}>
                   <MoreVertIcon />
@@ -212,14 +233,14 @@ function Transactions() {
                   open={isMenuOpen && menuRowIndex === rowIndex}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={() => { console.log(`Edit row ${rowIndex}`); handleMenuClose(); }}>
+                  <MenuItem onClick={() => handleEditModal(row)}>
                     Edit
                   </MenuItem>
                   <MenuItem onClick={() => handleDeleteDialog(rowIndex)} style={{ color: 'red' }}>
                     Delete
                   </MenuItem>
-                  <MenuItem onClick={() => { console.log(`View details for row ${rowIndex}`); handleMenuClose(); }}>
-                    View Details
+                  <MenuItem onClick={() => handlePreviewModal(row)}>
+                    Preview
                   </MenuItem>
                 </Menu>
                 <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
@@ -248,7 +269,9 @@ function Transactions() {
         </div>
 
         <TransactionModal
-          isOpen={isModalOpen} 
+          isOpen={isModalOpen}
+          mode={modalMode}
+          transaction={selectedTransaction}
           onClose={closeModal}
           onCreate={handleCreateTransaction}  
         />
