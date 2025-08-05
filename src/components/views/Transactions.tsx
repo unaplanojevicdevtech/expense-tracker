@@ -85,7 +85,23 @@ function Transactions() {
   };
 
   const handleCreateTransaction = (newTransaction: Transaction) => {
-    setTransactionList(currentTransactions => [...currentTransactions, newTransaction]);
+    const transactionToAdd = {
+      ...newTransaction,
+      date: typeof newTransaction.date === 'string' ? newTransaction.date : newTransaction.date.toISOString(),
+    };
+    setTransactionList(currentTransactions => [...currentTransactions, transactionToAdd]);
+  };
+
+  const handleEditTransaction = (updatedTransaction: Transaction) => {
+    const transactionToUpdate = {
+      ...updatedTransaction,
+      date: typeof updatedTransaction.date === 'string' ? updatedTransaction.date : updatedTransaction.date.toISOString(),
+    };
+    setTransactionList(currentTransactions =>
+      currentTransactions.map(t =>
+        t.id === updatedTransaction.id ? transactionToUpdate : t
+      )
+    );
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, rowIndex: number) => {
@@ -273,7 +289,8 @@ function Transactions() {
           mode={modalMode}
           transaction={selectedTransaction}
           onClose={closeModal}
-          onCreate={handleCreateTransaction}  
+          onCreate={handleCreateTransaction}
+          onEdit={handleEditTransaction}
         />
       </main>
     </>
