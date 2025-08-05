@@ -18,12 +18,14 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { enGB } from 'date-fns/locale';
 import { useUser } from '../../context/UserContext';
-import { ITransactionTableRow, Transaction } from '../../models/Transaction';
+import { Transaction } from '../../models/Transaction';
+import { parse } from 'date-fns/parse';
+import { format } from 'date-fns/format';
 
 type TransactionModalProps = {
   isOpen: boolean;
   mode?: 'create' | 'edit' | 'preview';
-  transaction?: ITransactionTableRow | null;
+  transaction?: Transaction | null;
   onClose: () => void;
   onCreate: (transaction: Transaction) => void;
   onEdit: (transaction: Transaction) => void;
@@ -70,7 +72,7 @@ export default function TransactionModal({
       amount: Number(amount),
       currency: currency.toUpperCase(),
       category,
-      date,
+      date: date ? format(date, 'dd/MM/yyyy') : '',
       note,
     } as Transaction;
 
@@ -133,7 +135,11 @@ export default function TransactionModal({
     if ((mode === 'preview' || mode === 'edit') && transaction) {
       setIsActionButtonDisabled(true);
 
-      setDate(transaction.date as Date);
+      const txDate = typeof transaction.date === 'string'
+      ? parse(transaction.date, 'dd/MM/yyyy', new Date())
+      : transaction.date;
+
+      setDate(txDate);
       setAmount(transaction.amount.toString());
       setCurrency(transaction.currency);
       setCategory(transaction.category);

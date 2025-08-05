@@ -1,5 +1,4 @@
-import { format } from "date-fns";
-import { ITransactionTableRow, Transaction } from "../models/Transaction";
+import { Transaction } from "../models/Transaction";
 
 export function filterByUser(transaction: Transaction, userId?: number) {
   return transaction.userId === userId;
@@ -15,10 +14,9 @@ export function filterByDate(transaction: Transaction, date: Date | null) {
   return txDate >= date;
 }
 
-export function mapTransaction(transaction: Transaction): ITransactionTableRow {
+export function mapTransaction(transaction: Transaction): Transaction {
   return {
     ...transaction,
-    date: format(new Date(transaction.date), 'dd/MM/yyyy'),
     note: transaction.note ? transaction.note : '-',
   };
 }

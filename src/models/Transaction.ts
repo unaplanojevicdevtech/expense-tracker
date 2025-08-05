@@ -4,14 +4,6 @@ export type Transaction = {
   amount: number;
   currency: string;
   category: string;
-  date: string;
+  date: string | Date;
   note: string;
 };
-
-export interface ITransactionTableRow {
-  date: string;
-  note: string;
-  category: string;
-  amount: number;
-  currency: string;
-}
