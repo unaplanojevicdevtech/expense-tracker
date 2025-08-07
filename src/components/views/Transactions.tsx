@@ -3,7 +3,7 @@ import BasicTable from "../Table";
 import TransactionModal from "../modals/TransactionModal";
 import transactions from '../../data/transactions.json';
 import { useState } from "react";
-import { ITransactionTableRow, Transaction } from "../../models/Transaction";
+import { Transaction } from "../../models/Transaction";
 import { useUser } from "../../context/UserContext";
 import '../../style/Transactions.css';
 import { 
@@ -49,14 +49,14 @@ function Transactions() {
     new Set(transactionList.map(t => t.currency).filter(Boolean))
   );
 
-  const tableHeaders: { label: string; key: keyof ITransactionTableRow }[] = [
+  const tableHeaders: { label: string; key: keyof Transaction }[] = [
     { label: 'Date', key: 'date' },
     { label: 'Category', key: 'category' },
     { label: 'Amount', key: 'amount' },
     { label: 'Currency', key: 'currency' },
   ];
 
-  const tableRows: ITransactionTableRow[] = user
+  const tableRows: Transaction[] = user
     ? transactionList
         .filter(tx => filterByUser(tx, user.id))
         .filter(tx => filterByCurrency(tx, currency))
@@ -72,7 +72,7 @@ function Transactions() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'preview'>('create');
-  const [selectedTransaction, setSelectedTransaction] = useState<ITransactionTableRow | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   const openModal = () => {
     setModalMode('create');
@@ -85,7 +85,23 @@ function Transactions() {
   };
 
   const handleCreateTransaction = (newTransaction: Transaction) => {
-    setTransactionList(currentTransactions => [...currentTransactions, newTransaction]);
+    const transactionToAdd = {
+      ...newTransaction,
+      date: typeof newTransaction.date === 'string' ? newTransaction.date : newTransaction.date.toISOString(),
+    };
+    setTransactionList(currentTransactions => [...currentTransactions, transactionToAdd]);
+  };
+
+  const handleEditTransaction = (updatedTransaction: Transaction) => {
+    const transactionToUpdate = {
+      ...updatedTransaction,
+      date: typeof updatedTransaction.date === 'string' ? updatedTransaction.date : updatedTransaction.date.toISOString(),
+    };
+    setTransactionList(currentTransactions =>
+      currentTransactions.map(t =>
+        t.id === updatedTransaction.id ? transactionToUpdate : t
+      )
+    );
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, rowIndex: number) => {
@@ -93,18 +109,18 @@ function Transactions() {
     setMenuRowIndex(rowIndex);
   };
 
-  const setModalData = (row: ITransactionTableRow) => {
+  const setModalData = (row: Transaction) => {
     setSelectedTransaction(row);
     setIsModalOpen(true);
     handleMenuClose();
   };
 
-  const handlePreviewModal = (row: ITransactionTableRow) => {
+  const handlePreviewModal = (row: Transaction) => {
     setModalMode('preview');
     setModalData(row);
   };
 
-  const handleEditModal = (row: ITransactionTableRow) => {
+  const handleEditModal = (row: Transaction) => {
     setModalMode('edit');
     setModalData(row);
   };
@@ -220,7 +236,7 @@ function Transactions() {
               Create new transaction
             </Button>
           </div>
-          <BasicTable<ITransactionTableRow>
+          <BasicTable<Transaction>
             headers={tableHeaders}
             rows={paginatedRows}
             renderActions={(row, rowIndex) => (
@@ -273,7 +289,8 @@ function Transactions() {
           mode={modalMode}
           transaction={selectedTransaction}
           onClose={closeModal}
-          onCreate={handleCreateTransaction}  
+          onCreate={handleCreateTransaction}
+          onEdit={handleEditTransaction}
         />
       </main>
     </>

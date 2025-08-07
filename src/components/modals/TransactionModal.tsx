@@ -18,15 +18,17 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { enGB } from 'date-fns/locale';
 import { useUser } from '../../context/UserContext';
-import { ITransactionTableRow, Transaction } from '../../models/Transaction';
-import { format, parse } from 'date-fns';
+import { Transaction } from '../../models/Transaction';
+import { parse } from 'date-fns/parse';
+import { format } from 'date-fns/format';
 
 type TransactionModalProps = {
   isOpen: boolean;
   mode?: 'create' | 'edit' | 'preview';
-  transaction?: ITransactionTableRow | null;
+  transaction?: Transaction | null;
   onClose: () => void;
   onCreate: (transaction: Transaction) => void;
+  onEdit: (transaction: Transaction) => void;
 };
 
 export default function TransactionModal({ 
@@ -34,21 +36,22 @@ export default function TransactionModal({
   mode = 'create',
   transaction, 
   onClose,
-  onCreate 
+  onCreate,
+  onEdit
 }: TransactionModalProps) {
 
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
   const [amountTouched, setAmountTouched] = useState(false);
 
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Date | null>(null);
   const [currency, setCurrency] = useState('');
   const [category, setCategory] = useState('');
   const [note, setNote] = useState('');
 
   const { user } = useUser();
 
-  const [isCreateBtnDisabled, setIsCreateBtnDisabled] = useState(true);
+  const [isActionButtonDisabled, setIsActionButtonDisabled] = useState(true);
 
   const modalTitle = {
     create: 'Create new transaction',
@@ -69,14 +72,20 @@ export default function TransactionModal({
       amount: Number(amount),
       currency: currency.toUpperCase(),
       category,
-      date: date ? format(date, 'dd/MM/yyyy') : format(new Date(), 'dd/MM/yyyy'),
+      date: date ? format(date, 'dd/MM/yyyy') : '',
       note,
-    };
+    } as Transaction;
 
     onCreate(newTransaction); 
     resetForm();
     onClose();
   };
+
+  const editTransaction = (transaction: Transaction) => {
+    onEdit(transaction);
+    resetForm();
+    onClose();
+  }
 
   const cancelCreation = () => {
     resetForm();
@@ -88,7 +97,7 @@ export default function TransactionModal({
     resetAmountField();
     resetCategoryField();
     resetCurrencyField();
-    setIsCreateBtnDisabled(true);
+    setIsActionButtonDisabled(true);
   };
 
   const resetAmountField = () => {
@@ -106,7 +115,7 @@ export default function TransactionModal({
   };
 
   const resetDateField = () => {
-    setDate(new Date());
+    setDate(null);
   }
 
   useEffect(() => {
@@ -119,18 +128,24 @@ export default function TransactionModal({
     setAmountError(amountErr);
 
     const isFormValid = currency !== '' && category !== '' && !amountErr;
-    setIsCreateBtnDisabled(!isFormValid);
+    setIsActionButtonDisabled(!isFormValid);
   }, [currency, category, amount, amountTouched]);
 
   useEffect(() => {
     if ((mode === 'preview' || mode === 'edit') && transaction) {
-      setDate(parse(transaction.date, 'dd/MM/yyyy', new Date()));
+      setIsActionButtonDisabled(true);
+
+      const txDate = typeof transaction.date === 'string'
+      ? parse(transaction.date, 'dd/MM/yyyy', new Date())
+      : transaction.date;
+
+      setDate(txDate);
       setAmount(transaction.amount.toString());
       setCurrency(transaction.currency);
       setCategory(transaction.category);
       setNote(transaction.note);
     } else {
-      setDate(new Date());
+      setDate(null);
       setAmount('');
       setCurrency('');
       setCategory('');
@@ -222,7 +237,27 @@ export default function TransactionModal({
         <div className='modal-actions'>
           <Button onClick={cancelCreation}>Cancel</Button>
           { mode !== 'preview' && (
-            <Button disabled={isCreateBtnDisabled} onClick={createNewTransaction}>{buttonTitle()}</Button>
+            <Button
+              disabled={isActionButtonDisabled}
+              onClick={mode === 'edit'
+                ? () => {
+                    if (transaction) {
+                      editTransaction({
+                        ...transaction,
+                        amount: Number(amount),
+                        currency: currency.toUpperCase(),
+                        category,
+                        date: date ?? new Date(),
+                        note,
+                        id: transaction.id,
+                        userId: transaction.userId,
+                      });
+                    }
+                  }
+                : createNewTransaction}
+            >
+              {buttonTitle()}
+            </Button>
           )}
         </div>
       </div>

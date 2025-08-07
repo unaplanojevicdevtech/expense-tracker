@@ -3,7 +3,7 @@
     "id": "1",
     "userId": 3,
     "amount": 131.71,
-    "date": "2023-12-15",
+    "date": "10/02/2023",
     "note": "Sample expense 1",
     "category": "Utilities",
     "currency": "EUR"
@@ -12,7 +12,7 @@
     "id": "2",
     "userId": 3,
     "amount": 47.33,
-    "date": "2023-10-07",
+    "date": "07/10/2024",
     "note": "Sample expense 2",
     "category": "Health",
     "currency": "EUR"
@@ -21,7 +21,7 @@
     "id": "3",
     "userId": 1,
     "amount": 366.57,
-    "date": "2023-10-30",
+    "date": "16/07/2025",
     "note": "Sample expense 3",
     "category": "Entertainment",
     "currency": "EUR"
@@ -30,7 +30,7 @@
     "id": "4",
     "userId": 3,
     "amount": 197.58,
-    "date": "2023-12-05",
+    "date": "21/12/2023",
     "note": "Sample expense 4",
     "category": "Entertainment",
     "currency": "EUR"
@@ -39,7 +39,7 @@
     "id": "5",
     "userId": 1,
     "amount": 378.04,
-    "date": "2023-12-06",
+    "date": "31/07/2022",
     "note": "Sample expense 5",
     "category": "Entertainment",
     "currency": "EUR"
@@ -48,7 +48,7 @@
     "id": "6",
     "userId": 2,
     "amount": 87.64,
-    "date": "2023-10-23",
+    "date": "23/03/2024",
     "note": "Sample expense 6",
     "category": "Services",
     "currency": "EUR"
@@ -57,7 +57,7 @@
     "id": "7",
     "userId": 2,
     "amount": 277.88,
-    "date": "2023-12-09",
+    "date": "15/03/2024",
     "note": "Sample expense 7",
     "category": "Transport",
     "currency": "EUR"
@@ -66,7 +66,7 @@
     "id": "8",
     "userId": 3,
     "amount": 400.69,
-    "date": "2023-12-09",
+    "date": "16/04/2022",
     "note": "Sample expense 8",
     "category": "Food",
     "currency": "EUR"
@@ -75,7 +75,7 @@
     "id": "9",
     "userId": 3,
     "amount": 19.67,
-    "date": "2023-11-27",
+    "date": "21/09/2025",
     "note": "Sample expense 9",
     "category": "Utilities",
     "currency": "EUR"
@@ -84,7 +84,7 @@
     "id": "10",
     "userId": 1,
     "amount": 421.88,
-    "date": "2023-10-15",
+    "date": "08/03/2021",
     "note": "Sample expense 10",
     "category": "Food",
     "currency": "EUR"
@@ -93,7 +93,7 @@
     "id": "11",
     "userId": 1,
     "amount": 24,
-    "date": "2024-06-2",
+    "date": "13/12/2022",
     "note": "Sample expense 11",
     "category": "Transport",
     "currency": "USD"
@@ -102,7 +102,7 @@
     "id": "12",
     "userId": 1,
     "amount": 5000,
-    "date": "2024-06-02",
+    "date": "04/08/2024",
     "note": "Sample expense 12",
     "category": "Services",
     "currency": "RSD"
