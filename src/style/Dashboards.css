@@ -1,0 +1,15 @@
+.dashboard-page {
+  padding: 2rem 0;
+  color: #fff;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+}
+
+.dashboard-page-body {
+  padding: 0 2rem;
+}
+
+.dashboard-page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}

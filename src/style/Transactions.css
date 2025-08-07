@@ -1,13 +1,13 @@
 .transaction-page {
   background-color: #1e1e1e;
   min-height: 100vh;
-  padding: 32px 0;
+  padding: 2rem 0;
   color: #fff;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .transaction-page-body {
-  padding: 0 32px;
+  padding: 0 2rem;
 }
 
 .transaction-header {
@@ -27,7 +27,7 @@
 .transaction-page-title {
   font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .transaction-create-button {
