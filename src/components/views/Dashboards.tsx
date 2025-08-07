@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useUser } from "../../context/UserContext";
 import Header from "../Header";
 import { PieChart } from '@mui/x-charts/PieChart';
 import transactions from '../../data/transactions.json';
+import '../../style/Charts.css';
+import '../../style/Dashboards.css';
 
 function Dashboards() {
+  const { user } = useUser();
   const [ transactionList ] = useState(transactions);
 
+  const transactionsByUser = transactionList.filter(transaction => transaction.userId === user?.id);
+
   const categoryCurrencyTotals: { [key: string]: { [currency: string]: number } } = {};
-  for (const transaction of transactionList) {
+  for (const transaction of transactionsByUser) {
     if (!categoryCurrencyTotals[transaction.category]) {
       categoryCurrencyTotals[transaction.category] = {};
     }
@@ -30,9 +36,9 @@ function Dashboards() {
   return (
     <>
       <Header />
-      <div>
-        <main>
-          <h1>Dashboards</h1>
+      <div className="dashboard-page">
+        <main className="dashboard-page-body">
+          <h1 className="dashboard-page-title">Dashboards</h1>
           <div>
             <PieChart
               series={[
@@ -41,11 +47,11 @@ function Dashboards() {
                   innerRadius: 20,
                   outerRadius: 100,
                   paddingAngle: 5,
-
                 }
               ]}
               width={200}
               height={200}
+              
             />
           </div>
         </main>
