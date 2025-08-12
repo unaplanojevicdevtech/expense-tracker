@@ -6,7 +6,7 @@ import '../../style/Charts.css';
 import '../../style/Dashboards.css';
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from '@mui/x-charts/PieChart';
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select, Slider } from "@mui/material";
 
 function Dashboards() {
   const { user } = useUser();
@@ -22,6 +22,10 @@ function Dashboards() {
   const filteredTransactions = transactionList.filter(t => 
     t.userId === user?.id && (!currency || t.currency === currency)
   );
+
+  const clearFilters = () => {
+    setCurrency('');
+  };
 
   // Data for PieChart
   // TODO: Do the logic on backend side 
@@ -88,8 +92,8 @@ function Dashboards() {
       <div className="dashboard-page">
         <main className="dashboard-page-body">
           <h1 className="dashboard-page-title">Dashboards</h1>
-          <div>
-            <FormControl fullWidth>
+          <div className="dashboard-filters">
+            <FormControl style={{ width: '200px' }}>
               <InputLabel id="currency-select-label">Currency</InputLabel>
               <Select
                 label="Currency"
@@ -106,6 +110,27 @@ function Dashboards() {
                 ))}
               </Select>
             </FormControl>
+
+            <Slider
+              sx={{ width: 300 }} 
+              defaultValue={50} 
+              valueLabelDisplay="auto"
+            />
+
+            <Button
+              variant="outlined"
+              className="dashboard-button"
+              disabled={!currency}
+              onClick={clearFilters}
+              sx={{
+                '&.Mui-disabled': {
+                  color: '#aaa',
+                  backgroundColor: '#f5f5f5',
+                }
+              }}
+            >
+              Clear
+            </Button>
           </div>
           <div className="dashboard-charts">
             <div>
@@ -131,6 +156,22 @@ function Dashboards() {
                 xAxis={[{ data: periods }]}
                 series={series}
                 height={300}
+                sx={{
+                  // X-axis labels
+                  '.MuiChartsAxis-bottom .MuiChartsAxis-tickLabel': {
+                    fill: '#ffffff',
+                    fontWeight: 'bold',
+                  },
+                  // Y-axis labels
+                  '.MuiChartsAxis-left .MuiChartsAxis-tickLabel': {
+                    fill: '#ffffff',
+                    fontWeight: 'bold',
+                  },
+                  //  axis lines
+                  '.MuiChartsAxis-line': {
+                    stroke: '#ffffff',
+                  },
+                }}
               />
             </div>
           </div>
