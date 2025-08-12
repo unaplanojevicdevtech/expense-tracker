@@ -6,47 +6,62 @@ import '../../style/Charts.css';
 import '../../style/Dashboards.css';
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from '@mui/x-charts/PieChart';
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+
 function Dashboards() {
   const { user } = useUser();
   const [ transactionList ] = useState(transactions);
 
-  const transactionsByUser = transactionList.filter(transaction => transaction.userId === user?.id);
+  // Filters
+  const [currency, setCurrency] = useState('');
+
+  const uniqueCurrencies = Array.from(
+    new Set(transactionList.map(t => t.currency).filter(Boolean))
+  );
+
+  const filteredTransactions = transactionList.filter(t => 
+    t.userId === user?.id && (!currency || t.currency === currency)
+  );
 
   // Data for PieChart
   // TODO: Do the logic on backend side 
-  const categoryCurrencyTotals: { [key: string]: { [currency: string]: number } } = {};
-  for (const transaction of transactionsByUser) {
-    if (!categoryCurrencyTotals[transaction.category]) {
-      categoryCurrencyTotals[transaction.category] = {};
+  const categoryCurrencyTotals: Record<string, Record<string, number>> = {};
+  filteredTransactions.forEach(t => {
+    if (!categoryCurrencyTotals[t.category]) {
+      categoryCurrencyTotals[t.category] = {};
     }
-    categoryCurrencyTotals[transaction.category][transaction.currency] =
-      (categoryCurrencyTotals[transaction.category][transaction.currency] || 0) + transaction.amount;
-  }
+    categoryCurrencyTotals[t.category][t.currency] =
+      (categoryCurrencyTotals[t.category][t.currency] || 0) + t.amount;
+  });
 
   const pieData = [];
   let id = 0;
   for (const [category, currencyObj] of Object.entries(categoryCurrencyTotals)) {
-    for (const [currency, value] of Object.entries(currencyObj)) {
-      pieData.push({
-        id: id++,
-        value,
-        label: `${category} (${currency})`,
-      });
+    for (const [curr, value] of Object.entries(currencyObj)) {
+      if (!currency || curr === currency) {
+        pieData.push({
+          id: id++,
+          value,
+          label: `${category} (${curr})`,
+        });
+      }
     }
   }
 
   // Data for BarChart
   // TODO: Do the logic on backend side
   const grouped: Record<string, Record<string, number>> = {};
-
-  transactionsByUser.forEach((t) => {
+  filteredTransactions.forEach(t => {
     const [, month, year] = t.date.split("/");
     const period = `${month}/${year}`;
 
     if (!grouped[period]) grouped[period] = {};
+
     if (!grouped[period][t.category]) grouped[period][t.category] = 0;
+
     grouped[period][t.category] += t.amount;
   });
+
 
   // Sort periods chronologically
   const periods = Object.keys(grouped).sort((a, b) => {
@@ -73,6 +88,25 @@ function Dashboards() {
       <div className="dashboard-page">
         <main className="dashboard-page-body">
           <h1 className="dashboard-page-title">Dashboards</h1>
+          <div>
+            <FormControl fullWidth>
+              <InputLabel id="currency-select-label">Currency</InputLabel>
+              <Select
+                label="Currency"
+                variant="outlined"
+                sx={{ background: '#fff' }}
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                <MenuItem key="all" value=""  disabled={currency === ''}>All</MenuItem>
+                {uniqueCurrencies.map((curr) => (
+                  <MenuItem key={curr} value={curr}>
+                    {curr.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
           <div className="dashboard-charts">
             <div>
               <p>Amount by category</p>
