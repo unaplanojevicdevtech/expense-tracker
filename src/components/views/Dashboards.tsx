@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useUser } from "../../context/UserContext";
 import Header from "../Header";
 import transactions from '../../data/transactions.json';
@@ -6,7 +6,7 @@ import '../../style/Charts.css';
 import '../../style/Dashboards.css';
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from '@mui/x-charts/PieChart';
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 function Dashboards() {
   const { user } = useUser();
@@ -14,14 +14,29 @@ function Dashboards() {
 
   // Filters
   const [currency, setCurrency] = useState('');
+  const [minAmount, setMinAmount] = useState('');
 
-  const uniqueCurrencies = Array.from(
-    new Set(transactionList.map(t => t.currency).filter(Boolean))
-  );
+  const uniqueCurrencies = useMemo(() => {
+    return [...new Set(transactionList.map(t => t.currency).filter(Boolean))];
+  }, [transactionList]);
 
-  const filteredTransactions = transactionList.filter(t => 
-    t.userId === user?.id && (!currency || t.currency === currency)
-  );
+  const filteredTransactions = useMemo(() => {
+    return transactionList.filter(t => t.userId === user?.id && (!currency || t.currency === currency));
+  }, [transactionList, user?.id, currency]);
+
+  const clearFilters = () => {
+    setCurrency('');
+    setMinAmount('');
+  };
+
+  const filteredTransactionsForBar = useMemo(() => {
+    return transactionList.filter(t => {
+      const matchesUser = t.userId === user?.id;
+      const matchesCurrency = !currency || t.currency === currency;
+      const matchesMin = !minAmount || t.amount >= Number(minAmount);
+      return matchesUser && matchesCurrency && matchesMin;
+    });
+  }, [transactionList, user?.id, currency, minAmount]);
 
   // Data for PieChart
   // TODO: Do the logic on backend side 
@@ -37,11 +52,12 @@ function Dashboards() {
   const pieData = [];
   let id = 0;
   for (const [category, currencyObj] of Object.entries(categoryCurrencyTotals)) {
-    for (const [curr, value] of Object.entries(currencyObj)) {
-      if (!currency || curr === currency) {
+    for (const [curr, totalValue] of Object.entries(currencyObj)) {
+      const meetsAmount = minAmount ? totalValue >= Number(minAmount) : true;
+      if (meetsAmount) {
         pieData.push({
           id: id++,
-          value,
+          value: totalValue,
           label: `${category} (${curr})`,
         });
       }
@@ -51,17 +67,15 @@ function Dashboards() {
   // Data for BarChart
   // TODO: Do the logic on backend side
   const grouped: Record<string, Record<string, number>> = {};
-  filteredTransactions.forEach(t => {
+  filteredTransactionsForBar.forEach(t => {
     const [, month, year] = t.date.split("/");
     const period = `${month}/${year}`;
 
     if (!grouped[period]) grouped[period] = {};
-
     if (!grouped[period][t.category]) grouped[period][t.category] = 0;
 
     grouped[period][t.category] += t.amount;
   });
-
 
   // Sort periods chronologically
   const periods = Object.keys(grouped).sort((a, b) => {
@@ -88,8 +102,8 @@ function Dashboards() {
       <div className="dashboard-page">
         <main className="dashboard-page-body">
           <h1 className="dashboard-page-title">Dashboards</h1>
-          <div>
-            <FormControl fullWidth>
+          <div className="dashboard-filters">
+            <FormControl style={{ width: '200px' }}>
               <InputLabel id="currency-select-label">Currency</InputLabel>
               <Select
                 label="Currency"
@@ -106,10 +120,34 @@ function Dashboards() {
                 ))}
               </Select>
             </FormControl>
+
+            <TextField
+              label="Min amount"
+              type="number"
+              value={minAmount}
+              disabled={!currency}
+              sx={{ width: 200, background: '#fff' }}
+              onChange={(e) => setMinAmount(e.target.value)}
+            />
+
+            <Button
+              variant="outlined"
+              className="dashboard-button"
+              disabled={!currency}
+              onClick={clearFilters}
+              sx={{
+                '&.Mui-disabled': {
+                  color: '#aaa',
+                  backgroundColor: '#f5f5f5',
+                }
+              }}
+            >
+              Clear
+            </Button>
           </div>
           <div className="dashboard-charts">
-            <div>
-              <p>Amount by category</p>
+            <div className="dashboard-chart-wrapper">
+              <p className="dashboard-label">Amount by category</p>
               <PieChart
                 series={[
                   {
@@ -125,12 +163,28 @@ function Dashboards() {
               />
             </div>
 
-            <div style={{ marginTop: '2rem' }}>
-              <p>Amount per category over time</p>
+            <div className="dashboard-chart-wrapper" style={{ marginTop: '2rem' }}>
+              <p className="dashboard-label">Amount per category over time</p>
               <BarChart
                 xAxis={[{ data: periods }]}
                 series={series}
                 height={300}
+                sx={{
+                  // X-axis labels
+                  '.MuiChartsAxis-bottom .MuiChartsAxis-tickLabel': {
+                    fill: '#000000',
+                    fontWeight: 'bold',
+                  },
+                  // Y-axis labels
+                  '.MuiChartsAxis-left .MuiChartsAxis-tickLabel': {
+                    fill: '#000000',
+                    fontWeight: 'bold',
+                  },
+                  //  axis lines
+                  '.MuiChartsAxis-line': {
+                    stroke: '#000000',
+                  },
+                }}
               />
             </div>
           </div>

@@ -18,3 +18,37 @@
   margin: 2rem 0;
 }
 
+.dashboard-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: black;
+}
+
+.dashboard-chart-wrapper {
+  background: white;
+  padding: 1rem;
+}
+
+.dashboard-filters {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  }
+
+.dashboard-button {
+  background-color: #ffffff;
+  color: #1976d2;
+  border: 1px solid #1976d2;
+  text-transform: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.dashboard-button:hover {
+  background-color: #e3f2fd;
+  border-color: #1565c0;
+}
+
