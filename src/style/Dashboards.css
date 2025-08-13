@@ -18,6 +18,17 @@
   margin: 2rem 0;
 }
 
+.dashboard-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: black;
+}
+
+.dashboard-chart-wrapper {
+  background: white;
+  padding: 1rem;
+}
+
 .dashboard-filters {
   display: flex;
   align-items: center;
