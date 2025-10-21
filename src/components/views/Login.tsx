@@ -49,6 +49,7 @@ function Login() {
             variant="standard"
             required
             fullWidth
+            autoFocus
             error={usernameError}
             helperText={usernameError ? "Invalid username" : ""}
             value={username}

@@ -1,24 +1,18 @@
 import '../style/Header.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Menu,
-  MenuItem
-} from '@mui/material';
+import { Button, Menu, MenuItem } from '@mui/material';
 import UserModal from './modals/UserModal';
+import { LogoutDialog } from './dialogs/LogoutDialog';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function Header() {
   // dropdown menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
+
+  const homeLinkRef = useRef<HTMLAnchorElement>(null);
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,11 +56,16 @@ function Header() {
     setIsSettingsOpen(false);
   };
 
+  useEffect(() => {
+    // focus home link on mount for accessibility
+    homeLinkRef.current?.focus();
+  }, []);
+
   return (
     <header className="header">
       <div className="header-nav-wrapper">
         <div className="header-nav">
-          <Link to="/home" className="header-nav-item">Home</Link>
+          <Link to="/home" className="header-nav-item" ref={homeLinkRef}>Home</Link>
           <Link to="/transactions" className="header-nav-item">Transactions</Link>
         </div>
       </div>
@@ -85,16 +84,7 @@ function Header() {
           <MenuItem onClick={openSettings}>Settings</MenuItem>
           <MenuItem onClick={openLogoutDialog}>Logout</MenuItem>
         </Menu>
-        <Dialog open={isDialogOpen} onClose={closeLogoutDialog}>
-          <DialogTitle>Logout</DialogTitle>
-          <DialogContent>
-            <DialogContentText>Are you sure you want to log out? Any unsaved changes will be lost.</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeLogoutDialog}>Cancel</Button>
-            <Button onClick={logout}>Logout</Button>
-          </DialogActions>
-        </Dialog>
+        <LogoutDialog isOpen={isDialogOpen} onClose={closeLogoutDialog} onLogout={logout} />
         <UserModal isOpen={isSettingsOpen} onClose={closeSettings} />
       </div>
     </header>
