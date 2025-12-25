@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import '../../style/Modal.css';
 import '../../style/TransactionModal.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 // TODO: api call or make it a constant, possibility to add new, need to think about it
 import { categories } from '../../data/categories';
 
@@ -48,6 +48,9 @@ export default function TransactionModal({
   const [currency, setCurrency] = useState('');
   const [category, setCategory] = useState('');
   const [note, setNote] = useState('');
+
+  const datePickerRef = useRef<HTMLInputElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
   const { user } = useUser();
 
@@ -153,8 +156,25 @@ export default function TransactionModal({
     }
   }, [mode, transaction, isOpen]);
 
-  return (  
-    <Modal open={isOpen} onClose={onClose}>
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const id = setTimeout(() => {
+      if (mode === 'preview') {
+        cancelButtonRef.current?.focus();
+      } else {
+        datePickerRef.current?.focus();
+      }
+    }, 0);
+
+    return () => clearTimeout(id);
+  }, [isOpen, mode]);
+
+  return (
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+    >
       <div className='modal'>
         <h2 className='modal-title'>{modalTitle[mode]}</h2>
         <hr className="modal-divider" />
@@ -171,6 +191,7 @@ export default function TransactionModal({
               onChange={(newDate) => setDate(newDate)}
               slotProps={{
                 textField: {
+                  inputRef: datePickerRef,
                   inputProps: { readOnly: true }
                 }
               }}
@@ -235,7 +256,7 @@ export default function TransactionModal({
         <hr className="modal-divider" />
 
         <div className='modal-actions'>
-          <Button onClick={cancelCreation}>Cancel</Button>
+          <Button ref={cancelButtonRef} onClick={cancelCreation}>Cancel</Button>
           { mode !== 'preview' && (
             <Button
               disabled={isActionButtonDisabled}

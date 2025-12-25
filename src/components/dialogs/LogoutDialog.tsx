@@ -1,5 +1,12 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { useRef } from 'react';
+import {
+  Button, 
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText, 
+  DialogTitle 
+} from "@mui/material";
 
 interface LogoutDialogProps {
   isOpen: boolean;

@@ -2,17 +2,13 @@ import Header from "../Header";
 import BasicTable from "../Table";
 import TransactionModal from "../modals/TransactionModal";
 import transactions from '../../data/transactions.json';
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Transaction } from "../../models/Transaction";
+import { DeleteTransactionDialog } from "../dialogs/DeleteTransactionDialog";
 import { useUser } from "../../context/UserContext";
 import '../../style/Transactions.css';
 import { 
   Button, 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  DialogContentText, 
-  DialogTitle, 
   FormControl, 
   IconButton, 
   InputLabel, 
@@ -45,6 +41,8 @@ function Transactions() {
   const [currency, setCurrency] = useState('');
   const [date, setDate] = useState<Date | null>(null);
 
+  const mainRef = useRef<HTMLDivElement>(null);
+
   const uniqueCurrencies = Array.from(
     new Set(transactionList.map(t => t.currency).filter(Boolean))
   );
@@ -73,6 +71,10 @@ function Transactions() {
 
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'preview'>('create');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+
+  useEffect(() => {
+    mainRef.current?.focus({ preventScroll: true });
+  }, []);
 
   const openModal = () => {
     setModalMode('create');
@@ -179,7 +181,12 @@ function Transactions() {
   return (
     <>
       <Header />
-      <main className="transaction-page">
+      <main
+        className="transaction-page" 
+        ref={mainRef}
+        role="main"
+        tabIndex={-1}
+      >
         <div className="transaction-page-body">
           <h1 className="transaction-page-title">Transactions</h1>
           <div className="transaction-header">
@@ -259,16 +266,11 @@ function Transactions() {
                     Preview
                   </MenuItem>
                 </Menu>
-                <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-                  <DialogTitle>Delete transaction</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>Are you sure you want to delete this transaction? This action cannot be undone.</DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={deleteTransaction}>Delete</Button>   
-                  </DialogActions>
-                </Dialog>
+                <DeleteTransactionDialog
+                  isOpen={isDialogOpen} 
+                  onClose={() => setIsDialogOpen(false)} 
+                  onDelete={deleteTransaction}
+                />
               </>
             )}
           />

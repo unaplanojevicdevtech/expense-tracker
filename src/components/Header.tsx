@@ -5,14 +5,12 @@ import UserModal from './modals/UserModal';
 import { LogoutDialog } from './dialogs/LogoutDialog';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 function Header() {
   // dropdown menu
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
-
-  const homeLinkRef = useRef<HTMLAnchorElement>(null);
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -56,16 +54,11 @@ function Header() {
     setIsSettingsOpen(false);
   };
 
-  useEffect(() => {
-    // focus home link on mount for accessibility
-    homeLinkRef.current?.focus();
-  }, []);
-
   return (
     <header className="header">
       <div className="header-nav-wrapper">
         <div className="header-nav">
-          <Link to="/home" className="header-nav-item" ref={homeLinkRef}>Home</Link>
+          <Link to="/home" className="header-nav-item">Home</Link>
           <Link to="/transactions" className="header-nav-item">Transactions</Link>
         </div>
       </div>
